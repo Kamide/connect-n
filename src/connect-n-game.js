@@ -97,7 +97,7 @@ export class ConnectNGame extends HTMLElement {
 		this.#historyContainer = /**@type {HTMLDivElement}*/(menu.querySelector('.history'));
 		/**@type {HTMLButtonElement}*/(menu.querySelector('.clear-history')).addEventListener('click', () => this.#historyContainer.replaceChildren());
 
-		const palette = /**@type {SVGElement*/(menu.querySelector('.palette'));
+		const palette = /**@type {SVGElement}*/(menu.querySelector('.palette'));
 		palette.addEventListener('click', (event) => {
 			if (event.target instanceof SVGRectElement) {
 				const fill = event.target.getAttribute('fill');
@@ -185,6 +185,11 @@ export class ConnectNGame extends HTMLElement {
 		historyBoard.disabled = true;
 		historyBoard.game = game;
 		this.playerColors.map((color, player) => historyBoard.setPlayerColor(player, color));
+		historyBoard.tabIndex = 0;
+		historyBoard.addEventListener('click', () => {
+			this.#board.game = game;
+			this.playerColors.map((color, player) => this.#board.setPlayerColor(player, color));
+		});
 		this.#historyContainer.prepend(historyBoard);
 	}
 }
@@ -309,7 +314,7 @@ styleSheet.replaceSync(/*css*/`
 		font-family: inherit;
 	}
 
-	input, button:not(.menu-button) {
+	input, button:not(.menu-button), .history-board {
 		padding: 0.25em 0.75em;
 		border: thin solid var(--connect-n-game-border-color);
 		border-radius: 0.25em;
@@ -317,11 +322,11 @@ styleSheet.replaceSync(/*css*/`
 		transition: 0.2s outline;
 	}
 
-	:is(input, button:not(.menu-button)):hover {
+	:is(input, button:not(.menu-button), .history-board):hover {
 		border-color: var(--connect-n-game-active-border-color);
 	}
 
-	:is(input, button:not(.menu-button)):focus {
+	:is(input, button:not(.menu-button), .history-board):focus {
 		border-color: var(--connect-n-game-active-border-color);
 		outline-width: thick;
 	}
@@ -332,7 +337,7 @@ styleSheet.replaceSync(/*css*/`
 		font-family: inherit;
 	}
 
-	button:not(.menu-button):active {
+	:is(button:not(.menu-button), .history-board):active {
 		background: #d9e0e0;
 	}
 
@@ -362,14 +367,12 @@ styleSheet.replaceSync(/*css*/`
 
 	.history {
 		display: grid;
-		flex-direction: column;
+		align-items: center; /* fix aspect-ratio width overflow */
 		gap: 1em;
 	}
 
 	.history-board {
 		aspect-ratio: 64/27;
-		border: thin solid var(--connect-n-game-border-color);
-		border-radius: 0.25em;
 	}
 
 	.board {
