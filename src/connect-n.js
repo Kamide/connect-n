@@ -85,29 +85,29 @@ export function makeMove(game, columnIndex) {
 	const piecesPlayed = game.piecesPlayed + 1;
 	const nextActivePlayer = (activePlayer + 1) % game.settings.playerCount;
 
-	const board = [
+	const board = Object.freeze([
 		...previousBoard.slice(0, columnIndex),
-		[
+		Object.freeze([
 			...previousBoard[columnIndex].slice(0, rowIndex),
 			activePlayer,
 			...previousBoard[columnIndex].slice(rowIndex + 1)
-		],
+		]),
 		...previousBoard.slice(columnIndex + 1),
-	];
+	]);
 
-	return {
+	return Object.freeze({
 		...game,
 		piecesPlayed,
 		activePlayer: nextActivePlayer,
-		occupancies: [
+		occupancies: Object.freeze([
 			...previousTargetRows.slice(0, columnIndex),
 			rowIndex + 1,
 			...previousTargetRows.slice(columnIndex + 1),
-		],
+		]),
 		board,
 		winner: isWinner(game.settings, board, columnIndex, rowIndex, activePlayer) ? activePlayer : -1,
 		draw: piecesPlayed === game.settings.slotCount,
-	};
+	});
 }
 
 /**
