@@ -1,6 +1,6 @@
 /// <reference lib='webworker' />
 
-const version = '1.0.2';
+const version = '1.0.3';
 const cacheName = 'connect-n-' + version;
 
 const assets = [

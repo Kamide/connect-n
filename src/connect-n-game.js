@@ -201,6 +201,7 @@ styleSheet.replaceSync(/*css*/`
 		--connect-n-game-menu-width: 300px;
 		--connect-n-game-border-color: rgb(0,0,0, 0.1);
 		--connect-n-game-shadow-color: rgb(0,0,0, 0.5);
+		position: relative;
 		display: block;
 		overflow: hidden;
 		box-sizing: border-box;
