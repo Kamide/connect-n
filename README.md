@@ -1,6 +1,6 @@
 # Connect N
 
-Connect N is a multiplayer connection board game.
+Connect N is a PWA multiplayer connection board game.
 
 You decide the number of columns and rows.
 
