@@ -1,13 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	<title>Connect N</title>
-	<link rel="stylesheet" href="./index.css">
-	<script type="module" src="./index.js"></script>
+	<link rel='stylesheet' href='./index.css'>
+	<style>
+		:root {
+			color-scheme: dark light;
+		}
+
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			min-width: 100%;
+			min-height: 100%;
+			margin: 0;
+			font-family: system-ui, sans-serif;
+		}
+
+		connect-n-game {
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+	<script type='module' src='./src/connect-n-game.js'></script>
 </head>
 <body>
-	<noscript>You need to enable JavaScript to run this app.</noscript>
+	<connect-n-game></connect-n-game>
 </body>
 </html>

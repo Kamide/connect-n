@@ -81,3 +81,5 @@ styleSheet.replaceSync(/*css*/ `
 		box-sizing: border-box;
 	}
 `);
+
+customElements.define('connect-n-board', ConnectNBoard);

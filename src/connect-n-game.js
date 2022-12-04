@@ -200,12 +200,40 @@ styleSheet.replaceSync(/*css*/`
 		--connect-n-game-padding: 1.5em;
 		--connect-n-game-menu-width: 300px;
 		--connect-n-game-border-color: rgb(0,0,0, 0.1);
-		--connect-n-game-active-border-color: hsl(40, 100%, 50%);
-		--connect-n-game-outline-color: hsl(50, 100%, 50%, 0.5);
 		--connect-n-game-shadow-color: rgb(0,0,0, 0.5);
 		display: block;
 		overflow: hidden;
 		box-sizing: border-box;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:host {
+			--connect-n-game-outline-color: hsl(200, 100%, 50%, 0.5);
+			--connect-n-game-active-border-color: hsl(190, 50%, 50%);
+		}
+
+		button:not(.menu-button):active {
+			filter: brightness(1.2);
+		}
+
+		.history-board:active {
+			backdrop-filter: brightness(1.2);
+		}
+	}
+
+	@media (prefers-color-scheme: light) {
+		:host {
+			--connect-n-game-outline-color: hsl(50, 100%, 50%, 0.5);
+			--connect-n-game-active-border-color: hsl(40, 100%, 50%);
+		}
+
+		button:not(.menu-button):active {
+			filter: brightness(0.9);
+		}
+
+		.history-board:active {
+			backdrop-filter: brightness(0.9);
+		}
 	}
 
 	.container {
@@ -333,12 +361,7 @@ styleSheet.replaceSync(/*css*/`
 
 	button:not(.menu-button) {
 		padding: 0.25em 0.75em;
-		background: #e9f0f0;
 		font-family: inherit;
-	}
-
-	:is(button:not(.menu-button), .history-board):active {
-		background: #d9e0e0;
 	}
 
 	input[type='color'] {
@@ -380,3 +403,5 @@ styleSheet.replaceSync(/*css*/`
 		flex: 1;
 	}
 `);
+
+customElements.define('connect-n-game', ConnectNGame);
