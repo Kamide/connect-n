@@ -90,7 +90,7 @@ export function makeMove(game, columnIndex) {
 		Object.freeze([
 			...previousBoard[columnIndex].slice(0, rowIndex),
 			activePlayer,
-			...previousBoard[columnIndex].slice(rowIndex + 1)
+			...previousBoard[columnIndex].slice(rowIndex + 1),
 		]),
 		...previousBoard.slice(columnIndex + 1),
 	]);
