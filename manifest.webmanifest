@@ -2,11 +2,12 @@
 	"$schema": "https://json.schemastore.org/web-manifest-combined.json",
 	"name": "Connect N",
 	"short_name": "Connect N",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Multiplayer Connection Board Game",
 	"start_url": "./index.html",
-	"id": "./index.html",
+	"id": "connect-n",
 	"display": "standalone",
+	"orientation": "any",
 	"icons": [
 		{
 			"src": "./icon.png",
