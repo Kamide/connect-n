@@ -1,0 +1,24 @@
+{
+	"$schema": "https://json.schemastore.org/web-manifest-combined.json",
+	"name": "Connect N",
+	"short_name": "Connect N",
+	"version": "1.0.0",
+	"description": "Multiplayer Connection Board Game",
+	"start_url": "./index.html",
+	"id": "./index.html",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "./icon.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "./maskable.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}

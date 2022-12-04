@@ -3,8 +3,10 @@
 <head>
 	<meta charset='utf-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<meta name='description' content='Multiplayer Connection Board Game'>
+	<link rel='icon' href='icon.svg' type='image/svg+xml'>
+	<link rel='manifest' href='manifest.webmanifest'>
 	<title>Connect N</title>
-	<link rel='stylesheet' href='./index.css'>
 	<style>
 		:root {
 			color-scheme: dark light;
@@ -28,6 +30,9 @@
 		}
 	</style>
 	<script type='module' src='./src/connect-n-game.js'></script>
+	<script>
+		navigator.serviceWorker?.register('./service-worker.js', { type: 'module' });
+	</script>
 </head>
 <body>
 	<connect-n-game></connect-n-game>
