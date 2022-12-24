@@ -34,7 +34,6 @@ export function connectNSvg(game, columnCallback, slotCallback) {
 			width: calc(var(--board-width) / var(--column-count));
 			height: var(--board-height);
 			fill: var(--column-color);
-			cursor: grab;
 		}
 
 		.slot {

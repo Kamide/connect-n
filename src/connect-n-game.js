@@ -2,6 +2,7 @@ import { newGame, newSettings } from './connect-n.js';
 import { ConnectNBoard, GAME_CHANGE_EVENT } from './connect-n-board.js';
 
 export class ConnectNGame extends HTMLElement {
+	shadowRoot = this.attachShadow({ mode: 'open' });
 	#settingsHidden = false;
 	/**@type {HTMLDivElement}*/#menu;
 	/**@type {HTMLInputElement}*/#columnCountInput;
@@ -12,8 +13,7 @@ export class ConnectNGame extends HTMLElement {
 
 	constructor() {
 		super();
-		const shadow = this.attachShadow({ mode: 'open' });
-		shadow.adoptedStyleSheets = [styleSheet];
+		this.shadowRoot.adoptedStyleSheets = [styleSheet];
 
 		const container = document.createElement('div');
 		container.classList.add('container');
@@ -141,7 +141,7 @@ export class ConnectNGame extends HTMLElement {
 		menuButton.addEventListener('click', () => this.settingsHidden = !this.settingsHidden);
 
 		container.append(menu, board);
-		shadow.append(menuButton, container);
+		this.shadowRoot.append(menuButton, container);
 	}
 
 	get playerColors() {

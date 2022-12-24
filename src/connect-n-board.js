@@ -4,6 +4,7 @@ import { columnIsFull, columnIsValid, gameOver, makeMove, nextRow } from './conn
 export const GAME_CHANGE_EVENT = 'connect-n-board-game-change';
 
 export class ConnectNBoard extends HTMLElement {
+	shadowRoot = this.attachShadow({ mode: 'open' });
 	disabled = false;
 	/**@type {import('./connect-n.js').Game | undefined}*/#game;
 	/**@type {SVGElement | undefined}*/#svg;
@@ -11,8 +12,7 @@ export class ConnectNBoard extends HTMLElement {
 
 	constructor() {
 		super();
-		const shadow = this.attachShadow({ mode: 'open' });
-		shadow.adoptedStyleSheets = [styleSheet];
+		this.shadowRoot.adoptedStyleSheets = [styleSheet];
 	}
 
 	get game() {
@@ -22,7 +22,6 @@ export class ConnectNBoard extends HTMLElement {
 	set game(game) {
 		this.#game = game;
 		this.#slots = new Map();
-		// @ts-ignore
 		this.shadowRoot.replaceChildren();
 
 		if (game) {
@@ -31,7 +30,11 @@ export class ConnectNBoard extends HTMLElement {
 			}, (slot) => {
 				this.#slots.set(slot.dataset.columnIndex + ',' + slot.dataset.rowIndex, slot);
 			});
-			// @ts-ignore
+
+			if (!this.disabled && !gameOver(game)) {
+				svg.style.setProperty('--cursor', `var(--player-${game.activePlayer}-cursor)`);
+			}
+
 			this.shadowRoot.append(svg);
 		}
 	}
@@ -42,6 +45,19 @@ export class ConnectNBoard extends HTMLElement {
 	 */
 	setPlayerColor(player, color) {
 		this.#svg?.style.setProperty(`--player-${player}-color`, color);
+		this.#svg?.style.setProperty(`--player-${player}-cursor`, `url(${CSS.escape(this.pieceCursor(color))}), grab`);
+	}
+
+	/**
+	 * @param {string} color
+	 * @returns {string}
+	 */
+	pieceCursor(color) {
+		return 'data:image/svg+xml,' + encodeURIComponent(/*xml*/`
+			<svg xmlns='http://www.w3.org/2000/svg' viewBox='-8 -8 16 16' width='32' height='32'>
+				<circle r='7' stroke='black' stroke-width='1' fill='${color}' />
+			</svg>
+		`.replace(/[\t\n]/g, ''));
 	}
 
 	/**
@@ -54,13 +70,20 @@ export class ConnectNBoard extends HTMLElement {
 			if (!gameOver(this.#game) && columnIsValid(this.#game, columnIndex) && !columnIsFull(this.#game, columnIndex)) {
 				const rowIndex = nextRow(this.#game, columnIndex);
 				const activePlayer = this.#game.activePlayer;
-				this.#game = makeMove(this.#game, columnIndex);
-				this.dispatchEvent(new CustomEvent(GAME_CHANGE_EVENT, { detail: this.#game }));
+				const nextGame = this.#game = makeMove(this.#game, columnIndex);
+				this.dispatchEvent(new CustomEvent(GAME_CHANGE_EVENT, { detail: nextGame }));
 
 				const slot = this.#slots.get(columnIndex + ',' + rowIndex);
 				if (slot) {
 					slot.style.fill = `var(--player-${activePlayer}-color)`;
 					slot.dataset.player = String(activePlayer);
+				}
+
+				if (gameOver(nextGame)) {
+					this.#svg?.style.removeProperty('--cursor');
+				}
+				else {
+					this.#svg?.style.setProperty('--cursor', `var(--player-${nextGame.activePlayer}-cursor)`);
 				}
 			}
 		}
@@ -79,6 +102,10 @@ styleSheet.replaceSync(/*css*/ `
 		width: 100%;
 		height: 100%;
 		box-sizing: border-box;
+	}
+
+	.column {
+		cursor: var(--cursor);
 	}
 `);
 
