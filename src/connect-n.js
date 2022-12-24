@@ -16,6 +16,7 @@
  * 	occupancies: ReadonlyArray<number>;
  * 	board: ReadonlyArray<ReadonlyArray<number>>;
  * 	winner: number;
+ * 	winningPieces: ReadonlyArray<ReadonlyArray<number>>;
  * 	draw: boolean;
  * }>} Game
  */
@@ -48,6 +49,7 @@ export function newGame(settings = newSettings()) {
 		occupancies: Object.freeze(Array(settings.columnCount).fill(0)),
 		board: emptyBoard(settings.columnCount, settings.rowCount),
 		winner: -1,
+		winningPieces: Object.freeze([]),
 		draw: false,
 	});
 }
@@ -95,6 +97,8 @@ export function makeMove(game, columnIndex) {
 		...previousBoard.slice(columnIndex + 1),
 	]);
 
+	const winningPieces = getWinningPieces(game.settings, board, columnIndex, rowIndex, activePlayer);
+
 	return Object.freeze({
 		...game,
 		piecesPlayed,
@@ -105,7 +109,8 @@ export function makeMove(game, columnIndex) {
 			...previousTargetRows.slice(columnIndex + 1),
 		]),
 		board,
-		winner: isWinner(game.settings, board, columnIndex, rowIndex, activePlayer) ? activePlayer : -1,
+		winner: winningPieces.length > 0 ? activePlayer : -1,
+		winningPieces,
 		draw: piecesPlayed === game.settings.slotCount,
 	});
 }
@@ -116,78 +121,70 @@ export function makeMove(game, columnIndex) {
  * @param {number} columnIndex
  * @param {number} rowIndex
  * @param {number} activePlayer
- * @returns {boolean}
+ * @returns {ReadonlyArray<ReadonlyArray<number>>}
  */
-export function isWinner(settings, board, columnIndex, rowIndex, activePlayer) {
+export function getWinningPieces(settings, board, columnIndex, rowIndex, activePlayer) {
 	const { columnCount, rowCount, piecesToWin } = settings;
 
-	let horizontal = 0;
-	let firstMatchFound = false;
+	const horizontalMatches = [];
 	for (let c = Math.max(columnIndex - (piecesToWin - 1), 0); c < Math.min(columnIndex + piecesToWin, columnCount); c++) {
 		if (board[c][rowIndex] === activePlayer) {
-			firstMatchFound = true;
-			horizontal++;
-		} else if (firstMatchFound) {
+			horizontalMatches.push(Object.freeze([c, rowIndex]));
+		} else if (horizontalMatches.length > 0) {
 			break;
 		}
 	}
-	if (horizontal >= piecesToWin) {
-		return true;
+	if (horizontalMatches.length >= piecesToWin) {
+		return Object.freeze(horizontalMatches);
 	}
 
-	let vertical = 0;
-	firstMatchFound = false;
+	const verticalMatches = [];
 	for (let r = Math.max(rowIndex - (piecesToWin - 1), 0); r < Math.min(rowIndex + piecesToWin, rowCount); r++) {
 		if (board[columnIndex][r] === activePlayer) {
-			firstMatchFound = true;
-			vertical++;
-		} else if (firstMatchFound) {
+			verticalMatches.push(Object.freeze([columnIndex, r]));
+		} else if (verticalMatches.length > 0) {
 			break;
 		}
 	}
-	if (vertical >= piecesToWin) {
-		return true;
+	if (verticalMatches.length >= piecesToWin) {
+		return Object.freeze(verticalMatches);
 	}
 
-	let diagonal = 0;
-	firstMatchFound = false;
+	const diagonal45Matches = [];
 	for (let i = -(piecesToWin - 1); i <= piecesToWin - 1; i++) {
 		const c = columnIndex + i;
 		const r = rowIndex + i;
 
 		if (c >= 0 && c < columnCount && r >= 0 && r < rowCount) {
 			if (board[c][r] === activePlayer) {
-				firstMatchFound = true;
-				diagonal++;
-			} else if (firstMatchFound) {
+				diagonal45Matches.push(Object.freeze([c, r]));
+			} else if (diagonal45Matches.length > 0) {
 				break;
 			}
 		}
 	}
-	if (diagonal >= piecesToWin) {
-		return true;
+	if (diagonal45Matches.length >= piecesToWin) {
+		return Object.freeze(diagonal45Matches);
 	}
 
-	diagonal = 0;
-	firstMatchFound = false;
+	const diagonal135Matches = [];
 	for (let i = -(piecesToWin - 1); i <= piecesToWin - 1; i++) {
 		const c = columnIndex + i;
 		const r = rowIndex - i;
 
 		if (c >= 0 && c < columnCount && r >= 0 && r < rowCount) {
 			if (board[c][r] === activePlayer) {
-				firstMatchFound = true;
-				diagonal++;
-			} else if (firstMatchFound) {
+				diagonal135Matches.push(Object.freeze([c, r]));
+			} else if (diagonal135Matches.length > 0) {
 				break;
 			}
 		}
 	}
-	if (diagonal >= piecesToWin) {
-		return true;
+	if (diagonal135Matches.length >= piecesToWin) {
+		return Object.freeze(diagonal135Matches);
 	}
 
-	return false;
+	return Object.freeze([]);
 }
 
 /**

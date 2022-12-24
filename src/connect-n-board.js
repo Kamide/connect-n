@@ -7,7 +7,7 @@ export class ConnectNBoard extends HTMLElement {
 	shadowRoot = this.attachShadow({ mode: 'open' });
 	disabled = false;
 	/**@type {import('./connect-n.js').Game | undefined}*/#game;
-	/**@type {SVGElement | undefined}*/#svg;
+	/**@type {SVGSVGElement | undefined}*/#svg;
 	/**@type {Map<string, SVGCircleElement>}*/#slots = new Map();
 
 	constructor() {
@@ -31,7 +31,11 @@ export class ConnectNBoard extends HTMLElement {
 				this.#slots.set(slot.dataset.columnIndex + ',' + slot.dataset.rowIndex, slot);
 			});
 
-			if (!this.disabled && !gameOver(game)) {
+			if (gameOver(game)) {
+				// highlightWinningPieces relies on getBBox which requires the element to be connected to the DOM, so we must perform this function on the next event loop tick
+				Promise.resolve().then(() => this.highlightWinningPieces(game.winningPieces, game.winner));
+			}
+			else if (!this.disabled) {
 				svg.style.setProperty('--cursor', `var(--player-${game.activePlayer}-cursor)`);
 			}
 
@@ -81,6 +85,7 @@ export class ConnectNBoard extends HTMLElement {
 
 				if (gameOver(nextGame)) {
 					this.#svg?.style.removeProperty('--cursor');
+					this.highlightWinningPieces(nextGame.winningPieces, nextGame.winner);
 				}
 				else {
 					this.#svg?.style.setProperty('--cursor', `var(--player-${nextGame.activePlayer}-cursor)`);
@@ -88,6 +93,32 @@ export class ConnectNBoard extends HTMLElement {
 			}
 		}
 	};
+
+	/**
+	 * @param {ReadonlyArray<ReadonlyArray<number>>} winningPieces
+	 * @param {number} winner
+	 */
+	highlightWinningPieces(winningPieces, winner) {
+		if (this.#svg && Array.isArray(winningPieces)) {
+			const start = this.#svg.querySelector(`[data-column-index='${winningPieces[0]?.[0]}'][data-row-index='${winningPieces[0]?.[1]}']`);
+			if (start instanceof SVGGraphicsElement) {
+				const end = this.#svg.querySelector(`[data-column-index='${winningPieces.at(-1)?.[0]}'][data-row-index='${winningPieces.at(-1)?.[1]}']`);
+				if (end instanceof SVGGraphicsElement) {
+					const c1 = start.getBBox();
+					const c2 = end.getBBox();
+					const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+					line.classList.add('winning-line');
+					line.style.setProperty('stroke', `var(--player-${winner}-color`);
+					line.setAttribute('x1', String(c1.x + c1.width / 2));
+					line.setAttribute('y1', String(c1.y + c1.height / 2));
+					line.setAttribute('x2', String(c2.x + c1.width / 2));
+					line.setAttribute('y2', String(c2.y + c1.height / 2));
+					this.#svg.querySelector('.winning-line')?.remove();
+					this.#svg.querySelector('.board')?.append(line);
+				}
+			}
+		}
+	}
 }
 
 export const styleSheet = new CSSStyleSheet();

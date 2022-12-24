@@ -2,6 +2,7 @@
  * @param {import('./connect-n.js').Game} game
  * @param {(column: SVGRectElement) => void} [columnCallback]
  * @param {(slot: SVGCircleElement) => void} [slotCallback]
+ * @returns {SVGSVGElement}
  */
 export function connectNSvg(game, columnCallback, slotCallback) {
 	const width = game.settings.columnCount * 100;
@@ -43,6 +44,12 @@ export function connectNSvg(game, columnCallback, slotCallback) {
 			stroke: var(--slot-stroke-color);
 			stroke-width: calc(var(--board-min-dimension) * var(--slot-stroke-width-multiplier));
 			pointer-events: none;
+		}
+
+		.winning-line {
+			stroke-width: calc(var(--board-min-dimension) * 7/8);
+			stroke-linecap: round;
+			opacity: 0.6;
 		}
 	`;
 

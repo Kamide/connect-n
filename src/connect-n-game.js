@@ -97,7 +97,7 @@ export class ConnectNGame extends HTMLElement {
 		this.#historyContainer = /**@type {HTMLDivElement}*/(menu.querySelector('.history'));
 		/**@type {HTMLButtonElement}*/(menu.querySelector('.clear-history')).addEventListener('click', () => this.#historyContainer.replaceChildren());
 
-		const palette = /**@type {SVGElement}*/(menu.querySelector('.palette'));
+		const palette = /**@type {SVGSVGElement}*/(menu.querySelector('.palette'));
 		palette.addEventListener('click', (event) => {
 			if (event.target instanceof SVGRectElement) {
 				const fill = event.target.getAttribute('fill');
@@ -402,6 +402,11 @@ styleSheet.replaceSync(/*css*/`
 	.board {
 		padding: var(--connect-n-game-padding);
 		flex: 1;
+	}
+
+	.palette {
+		user-select: none; /* prevent nearby text selection */
+		shape-rendering: crispEdges;
 	}
 `);
 
