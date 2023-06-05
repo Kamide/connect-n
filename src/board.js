@@ -66,7 +66,6 @@ export class ConnectNBoard extends HTMLElement {
 		this.activePiece.remove();
 		this.connections = /**@type {SVGGElement}*/($('connections'));
 		this.particles = /**@type {SVGGElement}*/($('particles'));
-		this.svgResizeObserver = new ResizeObserver(this.updateSvgMatrix);
 	}
 
 	clone() {
@@ -81,16 +80,12 @@ export class ConnectNBoard extends HTMLElement {
 
 	connectedCallback() {
 		this.render(this.game);
-		if (this.playable) {
-			this.svgResizeObserver.observe(this.svg);
-		}
 	}
 
 	disconnectedCallback() {
 		this.aiAnimation?.cancel();
 		this.bounceAnimation?.cancel();
 		this.fallingAnimation?.cancel();
-		this.svgResizeObserver.unobserve(this.svg);
 	}
 
 	/**
@@ -108,7 +103,6 @@ export class ConnectNBoard extends HTMLElement {
 				toggle('pointerup', this.onPointerUp);
 				toggle('blur', this.unsetPointerId);
 				toggle('keydown', this.onKeyDown);
-				this.svgResizeObserver[on ? 'observe' : 'unobserve'](this.svg);
 			}
 		}
 		else if (name === 'particle-effects') {
@@ -166,9 +160,6 @@ export class ConnectNBoard extends HTMLElement {
 			this.svg.viewBox.baseVal.height = (newGame.settings.rowCount + 1) * this.cellHeight + this.geometry.paddingTop + this.geometry.paddingBottom + this.geometry.strokeWidth + this.geometry.marginTop + this.geometry.marginBottom;
 			this.holeStrokePattern.width.baseVal.value = this.holeFillPattern.width.baseVal.value = 1 / newGame.settings.columnCount;
 			this.holeStrokePattern.height.baseVal.value = this.holeFillPattern.height.baseVal.value = 1 / newGame.settings.rowCount;
-			if (this.playable) {
-				this.updateSvgMatrix();
-			}
 		}
 
 		if (this.enableDiffing) {
@@ -499,6 +490,7 @@ export class ConnectNBoard extends HTMLElement {
 	onPointerDown = event => {
 		if (this.canInteract() && event.button === 0) {
 			this.pointerId = event.pointerId;
+			this.updateSvgMatrix();
 			this.updateActivePoint(event);
 			this.svg.addEventListener('pointermove', this.onPointerMove);
 		}
@@ -644,6 +636,7 @@ export class ConnectNBoard extends HTMLElement {
 			duration: Math.max(1, Math.abs(this.activeColumn - column)) * 4 * fps,
 			easing: 'ease',
 		});
+		this.aiAnimation.updatePlaybackRate(this.playbackRate);
 
 		try { await this.aiAnimation.finished; }
 		catch { return; }
