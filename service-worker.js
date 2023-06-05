@@ -1,37 +1,50 @@
 /// <reference lib='webworker' />
 
-const version = '1.0.5';
-const cacheName = 'connect-n-' + version;
+const version = '2.0.0';
+const cacheName = `connect-n-${version}`;
 
-const assets = [
+/**
+ * @type {ReadonlySet<string>}
+ */
+const assets = new Set([
 	'./',
-	'./icon.png',
-	'./icon.svg',
 	'./index.html',
 	'./manifest.webmanifest',
-	'./maskable.png',
-	'./maskable.svg',
-	'./src/connect-n-board.js',
-	'./src/connect-n-game.js',
-	'./src/connect-n-svg.js',
-	'./src/connect-n.js',
-].map(asset => new URL(asset, import.meta.url).href);
+	'./src/icon.svg',
+	'./src/icon.svg#maskable',
+	'./icons/any.png',
+	'./icons/maskable.png',
+	'./src/app.js',
+	'./src/board.js',
+	'./src/game.js',
+	'./src/sound-effects.js',
+	'./src/ai-worker.js',
+	'./src/ai.js',
+].map(asset => new URL(asset, import.meta.url).href));
 
-const worker = /**@type {ServiceWorkerGlobalScope}*/(/**@type {unknown}*/(globalThis));
+/**
+ * @param {FetchEvent} event
+ * @returns {Promise<Response>}
+ */
+const getResponse = async event => {
+	const cache = await caches.open(cacheName);
+	let response = await cache.match(event.request);
+	if (!response) {
+		response = await fetch(event.request.url);
+		if (response.status >= 200 && response.status < 300) {
+			cache.put(event.request, response.clone());
+		}
+	}
+	return response;
+};
 
-worker.addEventListener('install', (event) => {
-	event.waitUntil(caches.open(cacheName));
-});
+const worker = /**@type {ServiceWorkerGlobalScope}*/(/**@type {any}*/(globalThis));
 
-worker.addEventListener('fetch', (event) => {
-	if (assets.includes(event.request.url)) {
-		event.respondWith(caches.open(cacheName).then((cache) => {
-			return cache.match(event.request).then((cachedResponse) => {
-				return cachedResponse ?? fetch(event.request.url).then((fetchedResponse) => {
-					cache.put(event.request, fetchedResponse.clone());
-					return fetchedResponse;
-				});
-			});
-		}));
+worker.addEventListener('fetch', event => {
+	if (assets.has(event.request.url)) {
+		event.respondWith(getResponse(event));
 	}
 });
+
+worker.addEventListener('install', event =>
+	event.waitUntil(caches.open(cacheName)));

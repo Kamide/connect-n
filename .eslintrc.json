@@ -10,6 +10,10 @@
 		"sourceType": "module"
 	},
 	"rules": {
+		"comma-dangle": [
+			"warn",
+			"always-multiline"
+		],
 		"indent": [
 			"warn",
 			"tab",
@@ -19,23 +23,20 @@
 		],
 		"linebreak-style": [
 			"warn",
-			"windows"
+			"unix"
 		],
+		"no-undef": "off",
 		"quotes": [
 			"warn",
 			"single",
 			{
-				"avoidEscape": true,
-				"allowTemplateLiterals": true
+				"allowTemplateLiterals": true,
+				"avoidEscape": true
 			}
 		],
 		"semi": [
 			"warn",
 			"always"
-		],
-		"comma-dangle": [
-			"warn",
-			"always-multiline"
 		]
 	}
 }

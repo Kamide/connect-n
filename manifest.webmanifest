@@ -1,22 +1,39 @@
 {
 	"$schema": "https://json.schemastore.org/web-manifest-combined.json",
+	"version": "2.0.0",
+	"id": "connect-n",
 	"name": "Connect N",
 	"short_name": "Connect N",
-	"version": "1.0.5",
-	"description": "Multiplayer Connection Board Game",
+	"description": "Connect N is an offline-first PWA multiplayer connection board game. You decide the number of columns and rows. The first player to form a horizontal, vertical, or diagonal line of N pieces wins the game.",
+	"categories": [
+		"games"
+	],
 	"start_url": "./index.html",
-	"id": "connect-n",
-	"display": "standalone",
+	"display": "fullscreen",
 	"orientation": "any",
+	"theme_color": "#282828",
+	"background_color": "#282828",
 	"icons": [
 		{
-			"src": "./icon.png",
+			"src": "./src/icon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		},
+		{
+			"src": "./src/icon.svg#maskable",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "maskable"
+		},
+		{
+			"src": "./icons/any.png",
 			"sizes": "512x512",
 			"type": "image/png",
 			"purpose": "any"
 		},
 		{
-			"src": "./maskable.png",
+			"src": "./icons/maskable.png",
 			"sizes": "512x512",
 			"type": "image/png",
 			"purpose": "maskable"
