@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json.schemastore.org/web-manifest-combined.json",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"id": "connect-n",
 	"name": "Connect N",
 	"short_name": "Connect N",
@@ -14,18 +14,6 @@
 	"theme_color": "#282828",
 	"background_color": "#282828",
 	"icons": [
-		{
-			"src": "./src/icon.svg",
-			"sizes": "any",
-			"type": "image/svg+xml",
-			"purpose": "any"
-		},
-		{
-			"src": "./src/icon.svg#maskable",
-			"sizes": "any",
-			"type": "image/svg+xml",
-			"purpose": "maskable"
-		},
 		{
 			"src": "./icons/any.png",
 			"sizes": "512x512",
