@@ -1,7 +1,8 @@
 /// <reference lib='webworker' />
 
-const version = '2.0.2';
-const cacheName = `connect-n-${version}`;
+const version = '2.0.3';
+const id = 'connect-n';
+const cacheName = `${id}@${version}`;
 
 /**
  * @type {ReadonlySet<string>}
@@ -31,7 +32,7 @@ const getResponse = async event => {
 	let response = await cache.match(event.request);
 	if (!response) {
 		response = await fetch(event.request.url);
-		if (response.status >= 200 && response.status < 300) {
+		if (response.ok) {
 			cache.put(event.request, response.clone());
 		}
 	}
