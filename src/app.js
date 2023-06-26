@@ -467,7 +467,7 @@ template.innerHTML = /*html*/`
 				${icon('turn-around')}
 			</button>
 		</div>
-		<connect-n-board id='board' playable particle-effects></connect-n-board>
+		<connect-n-board exportparts='svg: board' id='board' playable particle-effects></connect-n-board>
 	</div>
 	<datalist id='player-palette'>
 		${defaultColors.reduce((html, [hex, name]) => html + /*html*/`
@@ -570,7 +570,7 @@ styles.replaceSync(/*css*/`
 	outline: none;
 	opacity: 0;
 	z-index: -1;
-	contain: layout paint;
+	contain: strict;
 }
 .hidden-input:checked + .icon {
 	d: var(--d);
@@ -692,29 +692,29 @@ styles.replaceSync(/*css*/`
 	--connect-n-board-margin-bottom: 0px;
 	--connect-n-board-margin-top: calc(-1 * var(--connect-n-cell-height));
 }
-.history-board {
+.history-board::part(svg) {
 	margin-block-end: 0.5em;
-	content-visibility: auto;
 }
 @media (hover: hover) {
-	.history-board:hover {
+	.history-board::part(svg):hover {
 		--connect-n-board-stroke: color-mix(in srgb, var(--connect-n-app-accent-color), transparent);
 	}
 }
-.history-board:active, .history-board::part(svg):focus-visible {
+.history-board::part(svg):is(:active, :focus-visible) {
 	--connect-n-board-stroke: var(--connect-n-app-accent-color);
 }
-.history-board:active {
+.history-board::part(svg):active {
 	filter: brightness(1.25);
 }
-#board {
-	flex: 1;
-}
 #board::part(svg) {
+	flex: 1;
 	box-sizing: border-box;
 	padding-inline: 0.375em;
 	touch-action: pinch-zoom;
 	transition: padding 0.1s;
+	overflow: clip;
+	min-width: 0;
+	min-height: 0;
 }
 @container container (orientation: landscape) {
 	#nav {

@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json.schemastore.org/web-manifest-combined.json",
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"id": "connect-n",
 	"name": "Connect N",
 	"short_name": "Connect N",

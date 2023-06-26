@@ -681,15 +681,12 @@ template.innerHTML = /*xml*/`
 export const styles = new CSSStyleSheet();
 styles.replaceSync(/*css*/`
 :host {
-	display: block;
-	overflow: hidden;
-	user-select: none;
-	contain: layout paint;
+	display: contents;
 }
 #svg {
-	width: 100%;
-	height: 100%;
 	outline: none;
+	user-select: none;
+	contain: content;
 }
 #hole-fill, #hole-stroke {
 	d: var(--connect-n-hole-path);
