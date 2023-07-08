@@ -1,6 +1,6 @@
 /// <reference lib='webworker' />
 
-const version = '2.0.4';
+const version = '2.0.5';
 const id = 'connect-n@';
 const cacheName = id + version;
 

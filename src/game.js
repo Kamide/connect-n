@@ -118,11 +118,12 @@ export const playColumn = (game, column) => {
 	const row = graph[column].length;
 	playableColumns = row < rowCount - 1 ? playableColumns : _(playableColumns.filter(c => c !== column));
 
+	const pieceIndex = pieces.length;
 	let subgraph = /**@type {Subgraph}*/(_({
-		piece: pieces.length,
+		piece: pieceIndex,
 		connections: _({}),
 	}));
-	graph = _(_with(graph, column, _([...graph[column], subgraph])));
+	graph = _(graph.with(column, _([...graph[column], subgraph])));
 
 	const piece = _({
 		column: column,
@@ -173,8 +174,8 @@ export const playColumn = (game, column) => {
 				const k = subgraph.connections[connectionType];
 
 				currentConnection = _([...connections[j], ...connections[k]].sort(byAscendingRowAndColumn));
-				connections = _(_with(connections, j, _([i])));
-				connections = _(_with(connections, k, _([i])));
+				connections = _(connections.with(j, _([i])));
+				connections = _(connections.with(k, _([i])));
 				connections = _([...connections, currentConnection]);
 
 				// Replace the invalid connection indices j and k with the new connection index i.
@@ -190,18 +191,22 @@ export const playColumn = (game, column) => {
 							[connectionType]: i,
 						}),
 					});
-					graph = _(_with(graph, c, _(_with(graph[c], r, s))));
+					graph = _(graph.with(c, _(graph[c].with(r, s))));
+
+					if (p === pieceIndex) {
+						subgraph = s;
+					}
 				}
 			}
 			else if (a) { // Add the piece to be played to current connection.
 				i = subgraph2.connections[connectionType];
 				currentConnection = _([...connections[i], subgraph.piece].sort(byAscendingRowAndColumn));
-				connections = _(_with(connections, i, currentConnection));
+				connections = _(connections.with(i, currentConnection));
 			}
 			else if (b) { // Add the comparison piece to the current connection.
 				i = subgraph.connections[connectionType];
 				currentConnection = _([...connections[i], subgraph2.piece].sort(byAscendingRowAndColumn));
-				connections = _(_with(connections, i, currentConnection));
+				connections = _(connections.with(i, currentConnection));
 			}
 			else { // Add both pieces to a new connection.
 				i = connections.length;
@@ -217,7 +222,7 @@ export const playColumn = (game, column) => {
 						[connectionType]: i,
 					}),
 				});
-				graph = _(_with(graph, column2, _(_with(graph[column2], row2, subgraph2))));
+				graph = _(graph.with(column2, _(graph[column2].with(row2, subgraph2))));
 			}
 			if (!b) { // A connection of this type has not been made before for the piece to be played.
 				subgraph = _({
@@ -227,7 +232,7 @@ export const playColumn = (game, column) => {
 						[connectionType]: i,
 					}),
 				});
-				graph = _(_with(graph, column, _(_with(graph[column], row, subgraph))));
+				graph = _(graph.with(column, _(graph[column].with(row, subgraph))));
 			}
 
 			if (currentConnection.length >= winCondition) {
@@ -338,34 +343,3 @@ export const isValidRow = (game, row) => row >= 0 && row <= game.settings.rowCou
  * @returns {number}
  */
 export const clampColumn = (game, column) => Math.min(Math.max(column, firstColumn), lastColumnOf(game));
-
-const _with = typeof Array.prototype.with === 'function' ?
-	/**
-	 * @template T
-	 * @param {ReadonlyArray<T>} array
-	 * @param {number} index
-	 * @param {T} value
-	 * @returns {T[]}
-	 */
-	(array, index, value) => array.with(index, value) :
-	/**
-	 * @template T
-	 * @param {ReadonlyArray<T>} array
-	 * @param {number} index
-	 * @param {T} value
-	 * @returns {T[]}
-	 */
-	(array, index, value) => {
-		let zeroBasedIndex = Math.trunc(index);
-		if (zeroBasedIndex < 0) {
-			zeroBasedIndex = array.length + zeroBasedIndex;
-		}
-		if (zeroBasedIndex < 0 || zeroBasedIndex >= array.length) {
-			throw new RangeError(`Invalid index : ${index}`);
-		}
-		const newArray = Array(array.length);
-		for (let i = 0; i < array.length; i++) {
-			newArray[i] = i === zeroBasedIndex ? value : array[i];
-		}
-		return newArray;
-	};

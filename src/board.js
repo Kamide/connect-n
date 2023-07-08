@@ -38,6 +38,7 @@ export class ConnectNBoard extends HTMLElement {
 	get game() { return this._game; }
 	set game(newGame) {
 		this.suggestMoveAbortController?.abort();
+		this.suggestMoveAbortController = undefined;
 		const oldGame = this._game;
 		this._game = newGame;
 		this.render(newGame, oldGame);
@@ -588,6 +589,7 @@ export class ConnectNBoard extends HTMLElement {
 		}
 		if (this.aiPlayers.size === 0) {
 			this.createMoveSuggesterAbortController?.abort();
+			this.createMoveSuggesterAbortController = undefined;
 			this.suggestMove = undefined;
 		}
 	}
