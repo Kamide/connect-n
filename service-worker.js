@@ -1,6 +1,6 @@
 /// <reference lib='webworker' />
 
-const version = '2.0.5';
+const version = '2.0.6';
 const id = 'connect-n@';
 const cacheName = id + version;
 
@@ -20,7 +20,7 @@ const assets = new Set([
 	'./manifest.webmanifest',
 	'./icons/any.png',
 	'./icons/maskable.png',
-].map(asset => new URL(asset, import.meta.url).href));
+].map(asset => import.meta.resolve(asset)));
 
 const install = async () => {
 	const cache = await caches.open(cacheName);

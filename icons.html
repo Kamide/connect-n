@@ -51,7 +51,7 @@
 			const image = document.createElement('img');
 			image.width = width;
 			image.height = height;
-			image.src = new URL(src, import.meta.url).href;
+			image.src = import.meta.resolve(src);
 			image.addEventListener('load', () =>
 				context.drawImage(image, 0, 0, width, height));
 		}

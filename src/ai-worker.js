@@ -46,7 +46,7 @@ export const createMoveSuggester = abortSignal =>
 			worker.removeEventListener('error', errorHandler);
 
 			if (abortSignal?.aborted) {
-				reject(abortSignal);
+				reject(abortSignal.reason);
 				return;
 			}
 
@@ -69,7 +69,7 @@ export const createMoveSuggester = abortSignal =>
 						worker.removeEventListener('error', errorHandler);
 
 						if (abortSignal?.aborted) {
-							reject(abortSignal);
+							reject(abortSignal.reason);
 						}
 						else if ('error' in event.data) {
 							reject(event.data);

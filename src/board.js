@@ -597,9 +597,7 @@ export class ConnectNBoard extends HTMLElement {
 	async createMoveSuggester() {
 		if (!this.suggestMove) {
 			this.createMoveSuggesterAbortController = new AbortController();
-
 			try { this.suggestMove = await createMoveSuggester(this.createMoveSuggesterAbortController.signal); }
-			catch { return; }
 			finally { this.createMoveSuggesterAbortController = undefined; }
 		}
 	}
@@ -608,7 +606,9 @@ export class ConnectNBoard extends HTMLElement {
 	 * @param {import('./game.js').Game} game
 	 */
 	async useAi(game) {
-		await this.createMoveSuggester();
+		try { await this.createMoveSuggester(); }
+		catch { return; }
+
 		if (game !== this.game) {
 			return;
 		}
@@ -619,7 +619,7 @@ export class ConnectNBoard extends HTMLElement {
 			this.suggestMoveAbortController?.abort();
 			this.suggestMoveAbortController = new AbortController();
 
-			try { column = (await this.suggestMove(game, this.aiDepth, this.suggestMoveAbortController.signal)).column; }
+			try { ({ column } = await this.suggestMove(game, this.aiDepth, this.suggestMoveAbortController.signal)); }
 			catch { return; }
 			finally { this.suggestMoveAbortController = undefined; }
 

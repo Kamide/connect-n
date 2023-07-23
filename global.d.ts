@@ -14,3 +14,7 @@ interface ReadonlyArray<T> {
 interface CSSStyleDeclaration {
 	d: string;
 }
+
+interface ImportMeta {
+	resolve(moduleName: string): string;
+}

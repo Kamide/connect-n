@@ -438,7 +438,7 @@ template.innerHTML = /*html*/`
 		<div id='menu' role='menu' tabindex='0' data-closed data-closing>
 			<form id='form'>
 				<div class='header'>
-					<img class='image' src='${escape(new URL('./icon.svg', import.meta.url).href)}' alt='Connect N' title='Connect N' />
+					<img class='image' src='${escape(import.meta.resolve('./icon.svg'))}' alt='Connect N' title='Connect N' />
 					<button class='button' type='reset' aria-label='Reset New Game Form' title='Reset New Game Form'>
 						${icon('reset')}
 					</button>
