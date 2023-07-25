@@ -191,23 +191,24 @@ export class ConnectNApp extends HTMLElement {
 	};
 
 	onMenuToggle = () => {
-		delete this.menu.dataset.closed;
+		this.menu.inert = true;
+		this.menu.hidden = false;
 
 		if (this.menuToggle.checked) {
-			// We have to remove the data-closing attribute *after* the next repaint to get a transition.
+			// We have to remove the data-hidden attribute *after* the next repaint to get a transition.
 			// The *after* part is why there are two calls to requestAnimationFrame which happens *before* the next repaint.
-			// If we remove the data-closing attribute in the same tick, there will be only 1 unique frame painted which means no animation is made.
+			// If we remove the data-hidden attribute in the same tick, there will be only 1 unique frame painted which means no animation is made.
 			requestAnimationFrame(() => {
 				requestAnimationFrame(() => {
 					if (this.menuToggle.checked) {
-						delete this.menu.dataset.closing;
+						delete this.menu.dataset.hidden;
 					}
 				});
 			});
 		}
 		else {
-			this.menu.dataset.closing = '';
-			delete this.menu.dataset.open;
+			this.menu.ariaExpanded = 'false';
+			this.menu.dataset.hidden = '';
 		}
 	};
 
@@ -216,8 +217,8 @@ export class ConnectNApp extends HTMLElement {
 	 */
 	onMenuTransitionEnd = event => {
 		if (event.propertyName === 'opacity') {
-			this.menu.toggleAttribute('data-closed', !this.menuToggle.checked);
-			this.menu.toggleAttribute('data-open', this.menuToggle.checked);
+			this.menu.ariaExpanded = String(this.menuToggle.checked);
+			this.menu.hidden = this.menu.inert = !this.menuToggle.checked;
 		}
 	};
 
@@ -379,7 +380,7 @@ const escape = html => String(html).replaceAll('&', '&amp;').replaceAll('<', '&l
  * @returns {string}
  */
 const icon = name => /*html*/`
-<svg class='icon ${escape(name)}-icon' aria-hidden='true' viewBox='0 0 24 24'>
+<svg class='icon ${escape(name)}-icon' viewBox='0 0 24 24' inert>
 	<path class='icon-path' />
 </svg>`;
 
@@ -435,7 +436,7 @@ template.innerHTML = /*html*/`
 			${toggle('antialiasing', 'Antialiasing')}
 			${toggle('menu', 'Menu', false)}
 		</nav>
-		<div id='menu' role='menu' tabindex='0' data-closed data-closing>
+		<div id='menu' role='menu' aria-expanded='false' tabindex='0' inert data-hidden hidden>
 			<form id='form'>
 				<div class='header'>
 					<img class='image' src='${escape(import.meta.resolve('./icon.svg'))}' alt='Connect N' title='Connect N' />
@@ -550,8 +551,6 @@ styles.replaceSync(/*css*/`
 	stroke-width: 1;
 	stroke-linecap: round;
 	stroke-linejoin: round;
-	pointer-events: none;
-	user-select: none;
 }
 .icon-path {
 	d: inherit;
@@ -587,15 +586,8 @@ styles.replaceSync(/*css*/`
 #menu:focus-visible {
 	outline: 0.125em solid var(--connect-n-app-accent-color);
 }
-#menu[data-closed] {
-	display: none;
-}
-#menu[data-closing] {
+#menu[data-hidden] {
 	opacity: 0;
-}
-#menu:not([data-open]) {
-	pointer-events: none;
-	user-select: none;
 }
 .header, .field {
 	margin-block-end: 0.5em;
@@ -733,7 +725,7 @@ styles.replaceSync(/*css*/`
 		inline-size: var(--connect-n-app-menu-inline-size);
 		max-inline-size: calc(100% - 2 * var(--connect-n-app-nav-size));
 	}
-	#menu[data-closing] {
+	#menu[data-hidden] {
 		margin-inline-start: calc(-1 * var(--connect-n-app-menu-inline-size));
 		transform: translateX(calc(-1 * var(--connect-n-app-nav-size)));
 	}
@@ -760,7 +752,7 @@ styles.replaceSync(/*css*/`
 		block-size: var(--connect-n-app-menu-block-size);
 		max-block-size: calc(100% - 2 * var(--connect-n-app-nav-size));
 	}
-	#menu[data-closing] {
+	#menu[data-hidden] {
 		margin-block-start: calc(-1 * var(--connect-n-app-menu-block-size));
 		transform: translateY(calc(-1 * var(--connect-n-app-nav-size)));
 	}

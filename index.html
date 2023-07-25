@@ -46,7 +46,7 @@
 		}
 
 		noscript,
-		[role='alert'] {
+		[role='alert']:not([hidden]) {
 			display: grid;
 			place-items: center;
 			box-sizing: border-box;
@@ -68,7 +68,7 @@
 				app.board.focus();
 			}
 			catch (error) {
-				document.querySelector("[role='alert']").style.removeProperty('display');
+				document.querySelector("[role='alert']").hidden = false;
 				throw error;
 			}
 		}
@@ -76,6 +76,6 @@
 </head>
 <body>
 	<noscript>You need to enable JavaScript to run Connect N.</noscript>
-	<div role='alert' style='display: none'>Your browser does not support features required by Connect N.</div>
+	<div role='alert' hidden>Your browser does not support features required by Connect N.</div>
 </body>
 </html>
