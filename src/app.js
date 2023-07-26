@@ -380,7 +380,7 @@ const escape = html => String(html).replaceAll('&', '&amp;').replaceAll('<', '&l
  * @returns {string}
  */
 const icon = name => /*html*/`
-<svg class='icon ${escape(name)}-icon' viewBox='0 0 24 24' inert>
+<svg class='icon ${escape(name)}-icon' aria-hidden='true' viewBox='0 0 24 24'>
 	<path class='icon-path' />
 </svg>`;
 
@@ -551,6 +551,8 @@ styles.replaceSync(/*css*/`
 	stroke-width: 1;
 	stroke-linecap: round;
 	stroke-linejoin: round;
+	pointer-events: none;
+	user-select: none;
 }
 .icon-path {
 	d: inherit;
