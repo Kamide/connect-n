@@ -512,6 +512,7 @@ styles.replaceSync(/*css*/`
 #nav {
 	display: flex;
 	overflow: auto;
+	overscroll-behavior: contain;
 }
 #nav .icon {
 	padding: 25%;
@@ -583,6 +584,7 @@ styles.replaceSync(/*css*/`
 	border-radius: 0.75em;
 	outline-offset: -0.125em;
 	overflow: auto;
+	overscroll-behavior: contain;
 	transition: margin 0.2s, opacity 0.2s, transform 0.2s;
 }
 #menu:focus-visible {
