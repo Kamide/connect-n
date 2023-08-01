@@ -74,18 +74,17 @@ export class ConnectNApp extends HTMLElement {
 			if (fields[i]) {
 				continue;
 			}
-			const color = this.container.style.getPropertyValue(`--connect-n-player-${i}`);
 			const j = escape(i);
 			const p = escape(i + 1);
 			this.playerFields.insertAdjacentHTML('beforeend', /*html*/`
-				<div class='player field' style='background: var(--connect-n-player-${j}); color: ${escape(colorContrast(color))}'>
+				<div class='player field' style='background: var(--connect-n-player-${j}); color: var(--connect-n-app-player-${j})'>
 					<label class='label' aria-label='Player ${p} Color Picker' title='Player ${p} Color Picker'>
 						${icon('player-index')}
 						<div class='field-text'>${p}</div>
 						<div class='button'>
 							${icon('bucket')}
 						</div>
-						<input class='input hidden-input' name='player-color' type='color' list='player-palette' value='${escape(color)}' data-player=${j} />
+						<input class='input hidden-input' name='player-color' type='color' list='player-palette' value='${escape(this.container.style.getPropertyValue(`--connect-n-player-${i}`))}' data-player=${j} />
 					</label>
 					<label class='button' aria-label='Player ${p} AI Toggle' title='Player ${p} AI Toggle'>
 						<input class='hidden-input' name='player-ai' type='checkbox' data-player=${j} ${this.board.aiPlayers.has(i) ? 'checked' : ''} />
@@ -107,7 +106,7 @@ export class ConnectNApp extends HTMLElement {
 		if (target.name === 'player-color') {
 			const i = Number(target.dataset.player);
 			this.container.style.setProperty(`--connect-n-player-${i}`, target.value);
-			/**@type {HTMLDivElement}*/(/**@type {HTMLLabelElement}*/(target.parentElement).parentElement).style.color = colorContrast(target.value);
+			this.container.style.setProperty(`--connect-n-app-player-${i}`, colorContrast(target.value));
 		}
 		else if (target.name === 'player-ai') {
 			this.board[target.checked ? 'addAi' : 'removeAi'](Number(target.dataset.player));
@@ -135,6 +134,7 @@ export class ConnectNApp extends HTMLElement {
 	onFormReset = () => {
 		for (let i = 0; i < defaultColors.length; i++) {
 			this.container.style.setProperty(`--connect-n-player-${i}`, defaultColors[i][0]);
+			this.container.style.setProperty(`--connect-n-app-player-${i}`, colorContrast(defaultColors[i][0]));
 		}
 		// Input values get reset after this event listener is called so we want to wait until the next tick occurs.
 		requestAnimationFrame(this.onPlayerCountChange);
@@ -420,7 +420,7 @@ const field = (name, label, min, value, max) => /*html*/`
 
 export const template = document.createElement('template');
 template.innerHTML = /*html*/`
-<div part='container' id='container' style='${escape(defaultColors.reduce((css, [hex], i) => css + `--connect-n-player-${i}: ${hex}; `, ''))}'>
+<div part='container' id='container' style='${escape(defaultColors.reduce((css, [hex], i) => css + `--connect-n-player-${i}: ${hex}; --connect-n-app-player-${i}: ${colorContrast(hex)}; `, ''))}'>
 	<div id='layout'>
 		<nav id='nav'>
 			<button id='undo-button' class='button' type='button' aria-label='Undo' title='Undo'disabled>
