@@ -338,7 +338,8 @@ export class ConnectNApp extends HTMLElement {
 
 	scrollToTop = () => {
 		this.menu.scrollTo({ top: 0, behavior: 'smooth' });
-		this.menu.focus();
+		// preventScroll is required in Chromium since Q4 2024.
+		this.menu.focus({ preventScroll: true });
 	};
 }
 
